@@ -26,15 +26,33 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// CORS — allow client origin with credentials for cookies
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || true,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+// CORS configuration — clean trailing slashes & support Vercel origins
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests (Postman, curl, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.replace(/\/$/, '');
+    const configuredClient = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : null;
+
+    if (
+      !configuredClient ||
+      cleanOrigin === configuredClient ||
+      cleanOrigin.endsWith('.vercel.app') ||
+      cleanOrigin.includes('localhost') ||
+      cleanOrigin.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Fallback allow all origins
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
