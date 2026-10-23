@@ -116,13 +116,15 @@ const Dashboard = () => {
       setRecentSales(salesRes.data.data);
       setLowStock(stockRes.data.data);
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to load dashboard data.';
-      setError(msg);
-      toast.error(msg);
+      if (err.response?.status !== 401) {
+        const msg = err.response?.data?.message || 'Failed to load dashboard data.';
+        setError(msg);
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     fetchDashboard();

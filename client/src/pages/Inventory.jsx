@@ -39,11 +39,13 @@ const Inventory = () => {
       setProducts(prodRes.data.data || []);
       setLogs(logRes.data.data || []);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to fetch inventory');
+      if (err.response?.status !== 401) {
+        toast.error(err.response?.data?.message || 'Failed to fetch inventory');
+      }
     } finally {
       setLoading(false);
     }
-  }, [search, selectedLocation, selectedStatus, toast]);
+  }, [search, selectedLocation, selectedStatus]);
 
   useEffect(() => {
     fetchInventory();

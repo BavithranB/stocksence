@@ -44,11 +44,13 @@ const Products = () => {
       });
       setProducts(res.data.data || []);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to fetch products');
+      if (err.response?.status !== 401) {
+        toast.error(err.response?.data?.message || 'Failed to fetch products');
+      }
     } finally {
       setLoading(false);
     }
-  }, [search, selectedCategory, selectedStatus, toast]);
+  }, [search, selectedCategory, selectedStatus]);
 
   useEffect(() => {
     fetchProducts();

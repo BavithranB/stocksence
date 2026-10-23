@@ -20,11 +20,13 @@ const Alerts = () => {
       const res = await alertsAPI.getAll();
       setAlerts(res.data.data || []);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to fetch alerts');
+      if (err.response?.status !== 401) {
+        toast.error(err.response?.data?.message || 'Failed to fetch alerts');
+      }
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     fetchAlerts();

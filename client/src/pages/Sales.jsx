@@ -31,11 +31,13 @@ const Sales = () => {
       setSales(salesRes.data.data || []);
       setProducts(prodRes.data.data || []);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to fetch sales');
+      if (err.response?.status !== 401) {
+        toast.error(err.response?.data?.message || 'Failed to fetch sales');
+      }
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     fetchSalesData();
