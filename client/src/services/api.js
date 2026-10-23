@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (!envUrl) return '/api';
+  const envUrl =
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.PROD ? 'https://stocksence-vhf9.onrender.com' : '/api');
+  if (envUrl === '/api') return '/api';
   return envUrl.endsWith('/api') ? envUrl : `${envUrl.replace(/\/$/, '')}/api`;
 };
 
